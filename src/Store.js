@@ -4,11 +4,7 @@ import { io } from "socket.io-client";
 export const CTX = createContext();
 
 const initialState = {
-  general: [
-    { from: "Yuki", msg: "はじめまして！" },
-    { from: "Yuki", msg: "元気？" },
-    { from: "Yoko", msg: "体調はいいよ！" },
-  ],
+  general: [],
   special: [],
 };
 
@@ -17,6 +13,7 @@ const reducer = (state, action) => {
 
   switch (action.type) {
     case "RECEIVE_MESSAGE":
+      console.log("test");
       return {
         ...state,
         [topic]: [...state[topic], { from, msg }],
@@ -33,14 +30,21 @@ const sendChatAction = (value) => {
 };
 
 const Store = ({ children }) => {
-  if (!socket) {
-    socket = io(":3001");
-  }
-
   const [chats, dispatch] = useReducer(reducer, initialState);
 
+  if (!socket) {
+    socket = io(":3001");
+    socket.on("chat message", (msg) => {
+      dispatch({ type: "RECEIVE_MESSAGE", payload: msg });
+    });
+  }
+
+  const user = "yuki" + Math.random(100).toFixed(2);
+
   return (
-    <CTX.Provider value={{ chats, sendChatAction }}>{children}</CTX.Provider>
+    <CTX.Provider value={{ chats, sendChatAction, user }}>
+      {children}
+    </CTX.Provider>
   );
 };
 

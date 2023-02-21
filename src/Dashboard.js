@@ -14,7 +14,7 @@ import { useContext, useState } from "react";
 import { CTX } from "./Store";
 
 const Dashboard = () => {
-  const { chats, sendChatAction } = useContext(CTX);
+  const { chats, sendChatAction, user } = useContext(CTX);
   const topics = Object.keys(chats);
 
   // localState
@@ -76,7 +76,11 @@ const Dashboard = () => {
           />
           <Button
             onClick={() => {
-              sendChatAction(textValue);
+              sendChatAction({
+                from: user,
+                msg: textValue,
+                topic: activeTopic,
+              });
               setTextValue("");
             }}
             variant="contained"
