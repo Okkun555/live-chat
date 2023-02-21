@@ -10,8 +10,17 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import { useContext, useState } from "react";
+import { CTX } from "./Store";
 
 const Dashboard = () => {
+  const { chats, sendChatAction } = useContext(CTX);
+  const topics = Object.keys(chats);
+
+  // localState
+  const [activeTopic, setActiveTopic] = useState(topics[0]);
+  const [textValue, setTextValue] = useState("");
+
   return (
     <div>
       <PaperWrapper>
@@ -19,7 +28,7 @@ const Dashboard = () => {
           Live Chat App
         </Typography>
         <Typography variant="h5" component="h5">
-          Topic Placeholder
+          {activeTopic}
         </Typography>
         <Box sx={{ display: "flex" }}>
           <div
@@ -30,8 +39,12 @@ const Dashboard = () => {
             }}
           >
             <List>
-              {["topic"].map((topic) => (
-                <ListItem button key={topic}>
+              {topics.map((topic) => (
+                <ListItem
+                  button
+                  key={topic}
+                  onClick={() => setActiveTopic(topic)}
+                >
                   <ListItemText primary={topic} />
                 </ListItem>
               ))}
@@ -42,10 +55,10 @@ const Dashboard = () => {
             style={{
               width: "70%",
               height: "300px",
-              paddingLeft: "30px 0 0 10px",
+              paddingLeft: "30px 0 10px 10px",
             }}
           >
-            {[{ from: "user", msg: "hello" }].map((chat, index) => (
+            {chats[activeTopic].map((chat, index) => (
               <Box sx={{ display: "flex", alignItems: "center" }} key={index}>
                 <Chip label={chat.from}></Chip>
                 <Typography variant="p">{chat.msg}</Typography>
@@ -55,11 +68,20 @@ const Dashboard = () => {
         </Box>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <TextField
+            value={textValue}
             label="send a chat"
             variant="standard"
             sx={{ width: "80%" }}
+            onChange={(e) => setTextValue(e.target.value)}
           />
-          <Button variant="contained" color="primary">
+          <Button
+            onClick={() => {
+              sendChatAction(textValue);
+              setTextValue("");
+            }}
+            variant="contained"
+            color="primary"
+          >
             送信
           </Button>
         </Box>

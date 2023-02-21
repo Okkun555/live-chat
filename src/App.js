@@ -1,9 +1,12 @@
 import Dashboard from "./Dashboard";
+import Store from "./Store";
 
 function App() {
   return (
-    <div className="App">
-      <Dashboard />
+    <div style={{ textAlign: "center" }}>
+      <Store>
+        <Dashboard />
+      </Store>
     </div>
   );
 }
